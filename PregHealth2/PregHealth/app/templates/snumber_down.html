@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+    <style>
+        #hhh{
+            width: 100%;
+            height: 100%;
+
+            margin: auto;
+            animation: heart 2.5s  0s infinite;
+        }
+        /*定义动画*/
+        @keyframes heart {
+            from {
+                transform:scale(1,1);
+            }
+            to {
+                transform:scale(1.5,1.5);
+            }
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+<div>
+    <img src="../static/person/DNA.webp" height="175" width="200"/>
+    <div id="container1" style="width: 300px; height: 180px;float:left"></div>
+    <div id="container2" style="width: 300px; height: 180px;float:left"></div>
+    <div style="overflow:hidden; width: 280px; height: 175px;float:left">
+        <div id="award">
+            <img src="../../static/BMI.jpg" opacity = 0.4 width="280px" height="80px" alt="">
+        </div>
+
+        <img id = "hhhh"  src="../../static/BMIPerson.png"  style = "position:relative ;left:0px;opacity:0.7;" opacity = 0.4 width="50px" height="100px" alt="" >
+    </div>
+    <div class="heart"  style="overflow:hidden; width: 300px; height: 175px;float:left">
+
+        <img id = "hhh" src="../../static/heartbeat.jpg" alt="">
+
+        <span style="position: absolute; top: 80px; left: 1000px;font-size:30px;color:#FFFFFF">64次/s</span>
+    </div>
+</div>
+
+
+<script language="JavaScript">
+    $(document).ready(function() {
+        var chart = {
+            type: 'scatter',
+            margin: [0, 0, 20, 40],//整个图表的位置，上下左右的空隙
+            events: {
+                click: function (e) {
+                    // find the clicked values and the series
+                    var x = Math.round(e.xAxis[0].value),
+                        y = Math.round(e.yAxis[0].value),
+                        series = this.series[0];
+                    // Add it
+                    series.addPoint([x, y]);
+                }
+            }
+        };
+        var title = {
+            text: '血细胞分析(Hb)'
+        };
+        var xAxis = {
+            gridLineWidth: 1,
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            maxZoom: 60
+        };
+        var yAxis = {
+            title: {
+                text: 'g/L'
+            },
+            minPadding: 0.2,
+            maxPadding: 0.2,
+            maxZoom: 60,
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        };
+        var legend = {
+            enabled: false
+        };
+        var exporting = {
+            enabled: false
+        };
+        var plotOptions = {
+            series: {
+                lineWidth: 1,
+                point: {
+                    events: {
+                        'click': function () {
+                            if (this.series.data.length > 1) {
+                                this.remove();
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        var series= [{
+            data: [[20, 20], [39,45],[47,48],[56,59],[62,79],[80,148]]
+        }];
+        var tooltip={
+            useHTML: true,
+            headerFormat: '<table>',
+            pointFormat: '<tr><th colspan="2"><h></h></th></tr>' +
+            '<tr><td>{point.y}g/L</td></tr>',
+            footerFormat: '</table>',
+            followPointer: true
+        };
+        var credits={
+            enabled: false
+        };
+
+        var json = {};
+        json.chart = chart;
+        json.title = title;
+        json.credits=credits;
+        //json.subtitle = subtitle;
+        json.xAxis = xAxis;
+        json.yAxis = yAxis;
+        json.legend = legend;
+        json.exporting = exporting;
+        json.series = series;
+        json.plotOptions = plotOptions;
+        json.tooltip=tooltip;
+        $('#container1').highcharts(json);
+
+    });
+    $(document).ready(function() {
+        var chart = {
+            type: 'column',
+            margin: [0, 0, 20, 60],//整个图表的位置，上下左右的空隙
+        };
+        var title = {
+            text: '血压'
+        };
+        var legend = {
+            enabled: false
+        };
+        var xAxis = {
+            categories: ['收缩压','舒张压']
+        };
+        var yAxis = {
+            labels:{step:2},
+            title: {
+                text: '血压 (mmHg)'
+            },
+            max:150,
+            plotLines:[{
+                color:'#6fcdea',           //线的颜色，定义为红色
+                dashStyle:'longdashdot',     //默认值，这里定义为实线
+                value:60,               //定义在那个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
+                width:2,                //标示线的宽度，2px
+                label:{
+                    text:'60',     //标签的内容
+                    align:'left',                //标签的水平位置，水平居左,默认是水平居中center
+                    x:-30                         //标签相对于被定位的位置水平偏移的像素，重新定位，水平居左10px
+                }
+            },{
+                color:'#94fb70',           //线的颜色，定义为红色
+                dashStyle:'longdashdot',     //默认值，这里定义为实线
+                value:90,               //定义在那个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
+                width:2,                //标示线的宽度，2px
+                label:{
+                    text:'90',     //标签的内容
+                    align:'left',                //标签的水平位置，水平居左,默认是水平居中center
+                    x:-30                         //标签相对于被定位的位置水平偏移的像素，重新定位，水平居左10px
+                }
+            },{
+                color:'#ff8421',           //线的颜色，定义为红色
+                dashStyle:'longdashdot',     //默认值，这里定义为实线
+                value:140,               //定义在那个值上显示标示线，这里是在x轴上刻度为3的值处垂直化一条线
+                width:2,                //标示线的宽度，2px
+                label:{
+                    text:'140',     //标签的内容
+                    align:'left',                //标签的水平位置，水平居左,默认是水平居中center
+                    x:-30                         //标签相对于被定位的位置水平偏移的像素，重新定位，水平居左10px
+                }
+            }]
+        };
+        var plotOptions = {
+            column: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        };
+        var credits = {
+            enabled: false
+        };
+        var series= [{
+            data: [80,null],
+            zones: [{
+                value: 60,
+                color: '#a6d6f7'
+            }, {
+                value: 90,
+                color: '#90ed7d'
+            },{
+                color: '#ff5349'
+            }]
+        },{
+            data: [null,145],
+            zones: [{
+                value: 90,
+                color: '#a6d6f7'
+            }, {
+                value: 140,
+                color: '#90ed7d'
+            },{
+                color: '#ff5349'
+            }]
+        }];
+        var tooltip={
+            useHTML: true,
+            headerFormat: '<table>',
+            pointFormat: '<tr><th colspan="2"><h>{this.x}</h></th></tr>' +
+            '<tr><td>{point.y}mmHg</td></tr>',
+            footerFormat: '</table>',
+            followPointer: true
+        };
+        var json = {};
+        json.chart = chart;
+        json.title = title;
+        //json.subtitle = subtitle;
+        json.tooltip = tooltip;
+        json.yAxis = yAxis;
+        json.xAxis = xAxis;
+        json.series = series;
+        json.plotOptions = plotOptions;
+        json.credits = credits;
+        json.legend=legend;
+        $('#container2').highcharts(json);
+    });
+    var BMI = 23.0;
+    var position = 250/18 * (BMI - 14) - 50/2;
+    d3.select("#hhhh").transition()
+        .duration(1500)
+        .style("left", position+"px")
+</script>
+
+</body>
+</html>

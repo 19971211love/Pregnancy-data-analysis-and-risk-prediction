@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>map</title>
+    <script src="http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <script src="http://code.highcharts.com/highcharts-more.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script src="http://d3js.org/topojson.v1.min.js" charset="utf-8"></script>
+    <script src="../../static/js/percentage.js"></script>
+    <script src="../../static/js/ageStructure.js"></script>
+    <script src="../../static/js/map.js" charset="utf-8"></script>
+    <script src="../../static/js/job.js"></script>
+    <script>
+
+    </script>
+
+    <style>
+        .center {
+            text-align: center;
+        }
+
+        .axis path,
+        .axis line{
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+
+        .axis text {
+            font-family: sans-serif;
+            font-size: 11px;
+        }
+
+        .maleText{
+            font-family: sans-serif;
+            font-size: 11px;
+            fill:white;
+        }
+
+        .femaleText{
+            font-family: sans-serif;
+            font-size: 11px;
+            fill:white;
+        }
+
+        .male {
+            fill-opacity: .6;
+            fill: #e377c2;
+        }
+
+        .male:first-child {
+            fill: #1f77b4;
+        }
+
+        .tooltip{
+            width: 350px;
+            height: 150px;
+            position: absolute;
+            font-family: simsun;
+            font-size: 16px;
+            line-height: 26px;
+            text-align: left;
+            border: 1px solid black;
+            background-color: white;
+            border-radius: 5px;
+        }
+        .southsea {
+            stroke: black;
+            stroke-width: 1px;
+            fill: #ccc;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div style="width:1500px;height:800px" id="s">
+        <svg id="s1" style="background-color:#FFFFFF;height:650px; width:700px;float:left;"></svg>
+
+
+        <svg id="s2" style="background-color:#FFFFFF;height:250px; width:700px;float:left;" ></svg>
+
+
+        <div id="s3" style="background-color:#FFFFFF;height:400px; width:700px;float:left;"></div>
+
+    </div>
+
+
+    <script>
+        var nation=['汉族','壮族','回族','满族','维吾尔族','苗族','彝族','土家族',
+            '藏族','蒙古族','布依族','侗族','瑶族','朝鲜族','白族','哈尼族',
+            '哈萨克族','黎族','傣族','畲族','傈僳族','仡佬族','东乡族','高山族',
+            '拉祜族','水族','佤族','纳西族','羌族','土族','仫佬族','锡伯族',
+            '柯尔克孜族','达斡尔族','景颇族','毛南族','撒拉族','布朗族','塔吉克族','阿昌族',
+            '普米族','鄂温克族','怒族','京族','基诺族','德昂族','保安族','俄罗斯族',
+            '裕固族','乌孜别克族','门巴族','鄂伦春族','独龙族','塔塔尔族','赫哲族','珞巴族'
+        ];
+        var cmap=[[32,113],[22,108],[38,106],[41,123],[37,80],[26,106],[25,102],[30,107],
+            [30,91],[42,112],[26,107],[28,109],[24,107],[43,129],[25,100],[23,102],
+            [44,81],[19,109],[22,101],[28,119],[26,98],[29,108],[35,103],[24,122],
+            [23,100],[26,108],[23,99],[27,100],[32,102],[37,102],[25,109],[42,123],
+            [38,76],[49,125],[24,98],[25,108],[36,102],[24,100],[37,75],[24,98],
+            [26,99],[48,123],[27,99],[22,107],[21,100],[25,99],[36,103],[44,87],
+            [39,100],[39,76],[28,95],[51,124],[28,99],[45,82],[47,132],[29,97]
+        ];
+        thnamehh="中国";
+        function data_oget()
+        {
+            var old=new Array(10,10,10,9,7,10,8,10,10,3,10,4,10,5,10,6,10,2,3,10,10,7,10,2,2,1,1,1,1,10,10,10,1,10,10,10,10,10,10,10,10,10,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+            var old1=new Array(1899,21,4,4,0,3,0,6,0,4,2,2,6,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
+            var hh=0.0;
+            var namehh=thnamehh;
+            if(namehh=="广东")
+                hh=10.1;
+            else if(namehh=="山东")
+                hh=9.9;
+            else if(namehh=="河南")
+                hh=9.5;
+            else if(namehh=="四川")
+                hh=8.2;
+            else if(namehh=="江苏")
+                hh=7.9;
+            else if(namehh=="河北")
+                hh=7.5;
+            else if(namehh=="湖南")
+                hh=6.9;
+            else if(namehh=="安徽")
+                hh=6.2;
+            else if(namehh=="湖北")
+                hh=5.8;
+            else if(namehh=="海南")
+                hh=0.8;
+            else if(namehh=="香港")
+                hh=0.7;
+            else if(namehh=="宁夏")
+                hh=0.6;
+            else if(namehh=="青海")
+                hh=0.5;
+            else if(namehh=="西藏")
+                hh=0.3;
+            else if(namehh=="澳门")
+                hh=0.06;
+            else if(namehh="中国")
+                hh=130.2;
+            else
+                hh=Math.random()*4+1;
+
+            for(var i=0;i<56;i++)
+            {
+                old1[i]=Math.round(old1[i]*hh);
+            }
+            return old1;
+        }
+        function data_get()
+        {
+            var em=data_oget();
+            //处理，使半径在1~10之间?
+            var max=em[0];
+            var min=em[0];
+            for(var l=0;l<em.length;l++)
+            {
+                if(em[i]>max)
+                {
+                    max=em[i];
+                }
+                else if(em[i]<min)
+                {
+                    min=em[i];
+                }
+            }
+            for(var l=0;l<em.length;l++)
+            {
+                em[i]=(em[i]-min)/(max-min)*9+1;
+            }
+            //按人数先后排序
+            var data=new Array(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55);
+            for(var j=0;j<em.length-1;j++)
+            {
+                for(var i=0; i<em.length-1-j;i++)
+                {
+                    if(em[i]<em[i+1])
+                    {
+                        var temp=em[i];
+                        em[i]=em[i+1];
+                        em[i+1]=temp;
+                        var temp1=data[i];
+                        data[i]=data[i+1];
+                        data[i+1]=temp1;
+                    }
+                }
+            }
+            var b=new Array(em,data);
+            return b;
+        }
+        function get_edu(a)
+        {
+            var namehh=thnamehh;
+            if(a==0)
+            {
+                var data=new Array(-0,-35,-1172,-2739,-15242,-1757);
+            }
+            else if(a==1)
+            {
+                var data=new Array(0,6,133,323,1326,126);
+            }
+            else if(a==2)
+            {
+                var data=new Array(0,7,179,346,1312,103);
+            }
+            else if(a==3)
+            {
+                var data=new Array(-0,-65,-1377,-2986,-15442,-1247);
+            }
+            var hh=0.0;
+            console.log(thnamehh);
+            if(namehh=="广东")
+                hh=10.1;
+            else if(namehh=="山东")
+                hh=9.9;
+            else if(namehh=="河南")
+                hh=9.5;
+            else if(namehh=="四川")
+                hh=8.2;
+            else if(namehh=="江苏")
+                hh=7.9;
+            else if(namehh=="河北")
+                hh=7.5;
+            else if(namehh=="湖南")
+                hh=6.9;
+            else if(namehh=="安徽")
+                hh=6.2;
+            else if(namehh=="湖北")
+                hh=5.8;
+            else if(namehh=="海南")
+                hh=0.8;
+            else if(namehh=="香港")
+                hh=0.7;
+            else if(namehh=="宁夏")
+                hh=0.6;
+            else if(namehh=="青海")
+                hh=0.5;
+            else if(namehh=="西藏")
+                hh=0.3;
+            else if(namehh=="澳门")
+                hh=0.06;
+            else if(namehh="中国")
+                hh=130.2;
+            else
+                hh=Math.random()*4+1;
+
+            var old1=new Array();
+            for(var i=0;i<6;i++)
+            {
+                old1[i]=Math.round(data[5-i]*hh);
+            }
+            console.log(thnamehh);
+            return old1;
+        }
+        var thnamehhid=1;
+        function nation3() {
+            var data_need=data_get();
+            var num_need=data_oget();
+            Highcharts.setOptions({
+                colors: ['#FFB6C1', '#FFF0F5', '#DB7093', '#B0C4DE', '#87CEFA', '#ADD8E6', '#E1FFFF',
+                    '#20B2AA', '#6AF9C4','#98FB98','#bbf73c','#FFFFF0', '#fff56f', '#f9c0db',
+                    '#B4FDD9','#A5BCF9','#17DBFE','#E5ACF9','#C5CAFF','#91FDB0','#E5F955']
+            });
+            $(document).ready(function() {
+                var chart = {
+                    type: 'bubble',
+                    zoomType: 'xy',
+                    height:400
+                };
+                var legend = {
+                    maxHeight:80
+                };
+                var title = {
+                    text: thnamehh+'民族分布'
+                };
+                var series= [
+                    {
+                        name:nation[data_need[1][0]],
+                        data:[{ x:cmap[data_need[1][0]][1] ,
+                            y:cmap[data_need[1][0]][0]  ,
+                            z:data_need[0][0] ,
+                            num:num_need[data_need[1][0]]}]
+                    }
+                ];
+                for(var i=1;i<10;i++)
+                {
+                    series.push({ name:nation[data_need[1][i]], data:[{ x:cmap[data_need[1][i]][1] , y:cmap[data_need[1][i]][0] ,z:data_need[0][i] ,num:num_need[data_need[1][i]] }]     });
+                }
+                for(i=10;i<56;i++)
+                {
+                    series.push({ name:nation[data_need[1][i]], data:[{ x:cmap[data_need[1][i]][1] , y:cmap[data_need[1][i]][0] ,z:data_need[0][i] ,num:num_need[data_need[1][i]] }]     });
+                }
+                var tooltip={
+                    useHTML: true,
+                    headerFormat: '<table>',
+                    pointFormat: '<tr><th colspan="2"><h>{series.name}</h></th></tr>' +
+                    '<tr><th>人数:</th><td>{point.num}</td></tr>',
+                    footerFormat: '</table>',
+                    followPointer: true
+                };
+                var credits={
+                    enabled: false
+                };
+                var json = {};
+                json.legend=legend;
+                json.chart = chart;
+                json.title = title;
+                json.series = series;
+                json.tooltip =tooltip;
+                json.credits=credits;
+                $('#s3').highcharts(json);
+
+            });
+        }
+
+        function edu3()
+        {
+            console.log(thnamehh);
+            var nameh=thnamehh;
+            console.log(thnamehh);
+            Highcharts.setOptions({
+                colors: ['#5db9fb', '#000000', '#94fb70', '#ff9d21']
+            });
+            $(document).ready(function() {
+
+                var chart = {
+                    type: 'column',//line...
+                    margin: 75,
+                    height:400,
+                    inverted:true,//条形图
+                    options3d: {
+                        enabled: true,
+                        alpha: 10,
+                        beta: 15,
+                        depth: 70
+                    }
+                };
+                var title = {
+                    text: nameh+'文化程度'
+                };
+                var xAxis = {
+                    categories: ['研究生及以上','大专/大本','高中/中专/中技','初中','小学','文盲']
+                };
+                var yAxis = {
+                    title: {
+                        text: 'population (人)'
+                    }
+                };
+                var credits = {
+                    enabled: false
+                };
+                var series= [
+                    {
+                        name: 'man_healthy',
+                        data: get_edu(1)//[gethh(1)[0],gethh(1)[1],gethh(1)[2],gethh(1)[3],gethh(1)[4],gethh(1)[5]]
+                    },{
+                        name:'man_unhealthy',
+                        data: get_edu(0)
+                    },{
+                        name:'woman_healthy',
+                        data: get_edu(2)
+                    },{
+                        name:'woman_unhealthy',
+                        data: get_edu(3)
+                    }
+
+                ];
+                var plotOptions = {
+                    series: {
+                        groupPadding:0,
+                        pointPadding:0
+                    }
+                };
+
+                var json = {};
+                json.chart = chart;
+                json.title = title;
+                json.xAxis = xAxis;
+                json.yAxis = yAxis;
+                json.credits=credits;
+                json.series = series;
+                json.plotOptions=plotOptions;
+                $('#s3').highcharts(json);
+            });
+            console.log(thnamehh);
+        }
+
+        function part3(a)
+        {
+            if(a==3)
+            {
+                nation3();
+            }
+            if(a==1)
+            {
+                edu3();
+            }
+            if(a==5)
+            {
+                per3();
+            }
+            if(a==2)
+            {
+                age3();
+            }
+            if(a==4)
+            {
+                job3();
+            }
+            console.log(thnamehh);
+        }
+
+
+        //   2
+        var dataset=[
+            {x:280,y:90,weight:40,color:"#F0FFF0",color2:"#20B2AA",thing:"文化程度",ci:-8,stri:1,name:"中国",y2:540,x2:1120},
+            {x:70,y:50,weight:50,color:"#00FFFF",color2:"#98FB98",thing:"年龄分布",ci:-16,stri:2,name:"中国",y2:620,x2:120},
+            {x:180,y:160,weight:40,color:"#E6E6FA",color2:"#FFFFE0",thing:"民族分布",ci:-8,stri:3,name:"中国",y2:320,x2:150},
+            {x:380,y:180,weight:50,color:"#87CEEB",color2:"#FFFAF0",thing:"职业分布",ci:-16,stri:4,name:"中国",y2:750,x2:1020},
+            {x:580,y:140,weight:60,color:"#FFB6C1",color2:"#C0C0C0",thing:"各职业分布",ci:-19,stri:5,name:"中国",y2:450,x2:240}
+        ];
+        var part2=d3.select("body").select("#s2");
+        var pa2=part2.append("g");
+        var node=pa2.selectAll('node')
+            .data(dataset)
+            .enter()
+            .append("g");
+        node.append('circle')
+            .attr('cx',function(d){
+                return 100;
+            })
+            .attr('cy',function(d){
+                return 100;
+            })
+            .attr('r',function(d){
+                return d.weight;
+            })
+            .attr("fill",function(d){
+                return d.color2;
+            })
+            .transition()//启动过渡
+            .duration(2000)//过渡的持续时间，单位毫秒
+            .ease("bounce")//过渡的方式：linear：线性变化，circle：慢慢的到达终态，elastic：弹跳的到达，bounce：在终态处弹跳
+            .delay(500)//延迟一段时间再开始过渡，单位毫秒.500可换为function（）{。。。}使不同图形的时间不同
+            .attr('fill',function(d){
+                return d.color;
+            })
+            .attr('cx',function(d){
+                return d.x;
+            })
+            .attr('cy',function(d){
+                return d.y;
+            });
+        node.append("text")
+            .attr("x",function(d){
+                return 60;
+            })
+            .attr("y",function(d){
+                return 105;
+            })
+            .attr("fill","#000000")
+            .text(function(d){ return d.thing; })
+            .transition()//启动过渡
+            .duration(2000)//过渡的持续时间，单位毫秒
+            .ease("bounce")//过渡的方式：linear：线性变化，circle：慢慢的到达终态，elastic：弹跳的到达，bounce：在终态处弹跳
+            .delay(500)
+            .attr("x",function(d){
+                return d.x-d.weight-d.ci;
+            })
+            .attr("y",function(d){
+                return d.y+5;
+            });
+        node.select("circle")
+            .on('click',function(d){
+                part3(d.stri);
+                thnamehhid=d.stri;
+                //self.location.href="http://127.0.0.1:5000/"+d.name+"/"+d.stri;
+            });
+
+        // 1
+        var county_data = [];
+        load_county_data();
+
+        var prov_transf_offset = [];
+        setProv_transf_offset();
+
+        //flag
+        var action_flag = new Array(34);
+        for(var i = 0;i < 34;i ++) action_flag[i] = 0;
+
+        //定义最小值和最大值对应的颜色
+        var lightestcolor = d3.rgb("#052152");	//浅蓝色
+        var brightestcolor = d3.rgb("#93AEDC");	//蓝色
+        var shade = "#ccc";
+
+        var width = 600,
+            height = 700;
+
+        var svg = d3.select("body").select("#s1");
+
+        var projection = d3.geo.mercator()
+            .center([107, 31])
+            .scale(600)
+            .translate([width/2*5/4, height/2*9/8]);
+
+        var path = d3.geo.path()
+            .projection(projection);
+
+
+
+        d3.json("static/map/china.topojson", function(error, toporoot) {
+            if (error)
+                return console.error(error);
+
+
+            //将TopoJSON对象转换成GeoJSON，保存在georoot中
+            var georoot = topojson.feature(toporoot,toporoot.objects.china);
+
+
+            //包含中国各省路径的分组元素
+            var china = svg.append("g");
+            //添加中国各种的路径元素
+            var provinces = china.selectAll("path")
+                .data( georoot.features )
+                .enter()
+                .append("path")
+                .style("fill", "#eee")
+                .attr("d", path )
+                .attr("id",function (d) {return "province_"+d.properties.id.toString();})
+                .attr("action_flag",0)
+                .on("mouseover",function(d) {
+                    var name = d.properties.name;
+                    var id = d.properties.id;
+
+                    if(action_flag[id-1]!=0)
+                        return;
+
+                    var x = prov_transf_offset[name].x;
+                    var y = prov_transf_offset[name].y;
+                    d3.select("#province_"+d.properties.id.toString())
+                        .transition()
+                        .duration(500)
+                        .ease("linear")
+                        .attr("transform","translate("+x.toString()+","+y.toString()+")")
+                        .style("fill", "red");
+
+                    action_flag[id-1] = 1;
+                })
+            ;
+
+            d3.json("static/map/china_data.json", function(error, valuedata){
+                var china_data=[];
+                //将读取到的数据存到数组china_data，令其索引号为各省的名称
+
+                for(var i=0; i<valuedata.provinces.length; i++){
+                    var name = valuedata.provinces[i].name;
+                    var value = valuedata.provinces[i].value;
+                    china_data[name] = value;
+                }
+
+                var maxvalue = d3.max(valuedata.provinces, function(d){ return d.value; });
+                var minvalue = 0;
+
+                //定义一个线性比例尺，将最小值和最大值之间的值映射到[0, 1]
+                var linear = d3.scale.linear()
+                    .domain([minvalue, maxvalue])
+                    .range([0, 1]);
+
+
+                //颜色插值函数
+                var computeColor = d3.interpolate(lightestcolor,brightestcolor);
+
+                //设定各省份的填充色
+                provinces.style("fill", function(d,i){
+                    var t = linear( china_data[d.properties.name] );
+                    var color = computeColor(t);
+                    return color.toString();
+                })
+                    .on("mouseout",function(d) {
+                        var id = d.properties.id;
+
+                        if(action_flag[id-1]!=1)
+                            return;
+                        //设定各省份的填充色
+                        d3.select(this)
+                            .transition()
+                            .duration(500)
+                            .ease("linear")
+                            .attr("transform","translate(0,0)")
+                            .style("fill", function(d,i){
+                                var t = linear( china_data[d.properties.name] );
+                                var color = computeColor(t);
+                                return color.toString();
+                            });
+                        action_flag[id-1] = 0;
+                    })
+                    .on("click",function (d) {
+                        provinces.remove();
+                        d3.select("#southsea").remove();
+                        d3.selectAll(".valueText").remove();
+                        d3.select("#rect").remove();
+                        drawProvMap(d.properties.id);
+                        thnamehh=d.properties.name;
+                        console.log(thnamehh);
+                        part3(thnamehhid);
+
+                        console.log(thnamehh);
+                        console.log(d.properties.name)
+                    })
+                ;
+
+
+                //定义一个线性渐变
+                var defs = svg.append("defs");
+
+                var linearGradient = defs.append("linearGradient")
+                    .attr("id","linearColor")
+                    .attr("x1","0%")
+                    .attr("y1","0%")
+                    .attr("x2","100%")
+                    .attr("y2","0%");
+
+                var stop1 = linearGradient.append("stop")
+                    .attr("offset","0%")
+                    .attr("stop-color",lightestcolor.toString());
+
+                var stop2 = linearGradient.append("stop")
+                    .attr("offset","100%")
+                    .attr("stop-color",brightestcolor.toString());
+
+                //添加一个矩形，并应用线性渐变
+                var colorRect = svg.append("rect")
+                    .attr("x", 20)
+                    .attr("y", height-180)
+                    .attr("width", 140)
+                    .attr("height", 30)
+                    .attr("id","rect")
+                    .style("fill","url(#" + linearGradient.attr("id") + ")");
+
+                //添加文字
+                var minValueText = svg.append("text")
+                    .attr("class","valueText")
+                    .attr("x", 20)
+                    .attr("y", height-180)
+                    .attr("dy", "-0.3em")
+                    .text(function(){
+                        return minvalue;
+                    });
+
+                var maxValueText = svg.append("text")
+                    .attr("class","valueText")
+                    .attr("x", 160)
+                    .attr("y", height-180)
+                    .attr("dy", "-0.3em")
+                    .text(function(){
+                        return "100%";
+                    });
+            })
+        });
+
+        d3.xml("static/map/southchinasea.svg", function(error, xmlDocument) {
+            svg.html(function(d){
+                return d3.select(this).html() + xmlDocument.getElementsByTagName("g")[0].outerHTML;
+            });
+
+            var gSouthSea = d3.select("#southsea");
+
+            gSouthSea.attr("transform","translate(600,470)scale(0.5)")
+                .attr("class","southsea");
+
+        });
+
+
+
+
+    </script>
+
+</body>
+</html>

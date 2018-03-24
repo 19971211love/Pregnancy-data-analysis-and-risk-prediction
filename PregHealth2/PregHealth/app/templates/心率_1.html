@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>心</title>
+<script src="js/jquery.min.js"></script>
+
+<style>
+
+* {
+margin:0;
+padding: 0;
+}
+body {
+background-color: #000;
+}
+h2 {
+    width: 220px;
+    margin: 20px auto;
+    color: #f00; 
+}
+.heart {
+width: 200px;
+height: 100px;
+position: relative; 
+margin:0 auto;
+top:30px;
+
+border: 1px solid yellow;
+overflow:hidden;
+}
+
+img{
+            width: 200px;
+            height: 100px;
+            position: absolute;
+            top: 0;right: 0;bottom: 0;left: 0;
+            margin: auto;
+			animation: heart 2.5s  0s infinite; 
+        }
+
+/*定义动画*/
+@keyframes heart {
+from {
+transform:scale(1,1);
+}
+to {
+transform:scale(1.5,1.5);
+}
+}
+
+</style>
+
+</head>
+<body>
+    <h2>扑通扑通的小心心</h2>
+<div class="heart">
+
+<img src="666.jpg" alt=""> 
+
+<span style="position: absolute; top: 40px; left: 20px;">64次/s</span>  
+</div>
+</body>
+</html>

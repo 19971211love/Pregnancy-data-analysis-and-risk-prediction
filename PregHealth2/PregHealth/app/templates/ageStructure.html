@@ -1,0 +1,87 @@
+﻿
+<html>  
+<head>  
+  <meta charset="utf-8">  
+  <title>{{name}}年龄结构</title>
+</head> 
+
+<style>
+
+   #container {
+      margin: 30px auto;
+      width: 600px;
+      height: 300px;
+      border: 1px solid #000;
+    }
+
+    .center {
+    text-align: center;
+    }
+
+    .axis path,  
+    .axis line{  
+      fill: none;  
+      stroke: black;  
+      shape-rendering: crispEdges;  
+  }  
+  
+  .axis text {  
+      font-family: sans-serif;  
+      font-size: 11px;  
+  }  
+
+  .maleText{
+    font-family: sans-serif;  
+      font-size: 11px; 
+      fill:white;
+  }
+
+  .femaleText{
+    font-family: sans-serif;  
+      font-size: 11px; 
+      fill:white;
+  }
+
+  rect {
+      fill-opacity: .6;
+      fill: #e377c2;
+  }
+
+  rect:first-child {
+      fill: #1f77b4;
+  }
+
+   .tooltip{
+    width: 350px;
+    height: 150px;
+    position: absolute;
+    font-family: simsun;
+    font-size: 16px;
+    line-height: 26px;
+    text-align: left;
+    border: 1px solid black;
+    background-color: white;
+    border-radius: 5px;
+    }
+  
+
+</style>
+
+<body>  
+
+  <h1 class="center">{{name}}各年龄区间人口数量</h1>
+
+  <div id="container"></div>
+
+
+  <div>
+    <p>柱状上方如果是蓝色，表示该年龄区间男性人口比女性人口多，紫色部分则为女性人口数量</p>
+    <p>柱状上方如果是粉色，表示该年龄区间女性人口比男性人口多，紫色部分则为男性人口数量</p>
+    <p>可将鼠标放于柱形图上，查看更小区间年龄结构</p>
+  </div>
+
+  <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>  
+  <script src="../../static/js/ageStructure.js"></script>
+
+</body>  
+</html>  
